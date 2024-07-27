@@ -17,14 +17,13 @@ actor ReentrantActor {
 
 	func doThing() async {
 		await lock.lock()
+		defer { lock.unlock() }
 
 		try! #require(self.value == 42)
 		self.value = 0
 		try! await Task.sleep(nanoseconds: 1_000_000)
 		try! #require(self.value == 0)
 		self.value = 42
-
-		await lock.unlock()
 	}
 }
 
@@ -34,7 +33,7 @@ struct LockTests {
 		let lock = AsyncLock()
 
 		await lock.lock()
-		await lock.unlock()
+		lock.unlock()
 	}
 
 	@Test
@@ -54,16 +53,4 @@ struct LockTests {
 			await task.value
 		}
 	}
-
-	//	@Test
-	//	func recursion() async {
-	//		let lock = AsyncLock()
-	//
-	//		await lock.withLock {
-	//			await lock.lock()
-	//			await lock.withLock {
-	//			}
-	//			await lock.unlock()
-	//		}
-	//	}
 }

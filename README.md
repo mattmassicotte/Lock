@@ -8,7 +8,9 @@
 # Lock
 A lock for Swift concurrency
 
-This package exposes a single type: `AsyncLock`. This type allows you to define **asynchronous** critical sections. One only task can enter a critical section at a time. The lock can be used recursively, but requires a little care to do so. Unfortunately, the method that implements the recursive functionality currently [crashes the compiler](https://github.com/swiftlang/swift/issues/75523).
+This package exposes two singles types: `AsyncLock` and `AsyncRecursiveLock`. These allow you to define **asynchronous** critical sections. One only task can enter a critical section at a time.
+
+Unfortunately, the method that implements the recursive functionality currently [crashes the compiler](https://github.com/swiftlang/swift/issues/75523).
 
 This is a handy tool for dealing with actor reentrancy.
 
@@ -31,31 +33,35 @@ dependencies: [
 
 The `AsyncLock` type is **non-Sendable**. This is an intentional choice to disallow sharing the lock across isolation domains. If you want to something like that, first think really hard about why and then check out [Semaphore][].
 
+Note that trying to acquire an already-locked `AsyncLock` **will** deadlock your actor.
+
 ```swift
 actor MyActor {
-    var value = 42
-    let lock = AsyncLock()
+  var value = 42
+  let lock = AsyncLock()
+  let recursiveLock = AsyncRecursiveLock()
 
-    func hasCriticalSections() async {
-        await lock.lock()
+  func hasCriticalSections() async {
+    // no matter how many tasks call this method,
+    // only one will be able to execute at a time
+    await lock.lock()
 
+    self.value = await otherObject.getValue()
+
+    lock.unlock()
+  }
+
+  // currently unavailable due to a compiler bug
+  func hasCriticalSectionsBlock() async {
+    await recursiveLock.withLock {
+      // acquiring this multiple times within the same task is safe
+      await recursiveLock.withLock {
         self.value = await otherObject.getValue()
-
-        await lock.unlock()
+      }
     }
-
-    // This version enables recursive locking, but currently crashes the compiler
-    func hasCriticalSectionsBlock() async {
-        await lock.withLock {
-
-        self.value = await otherObject.getValue()
-
-        }
-    }
+  }
 }
 ```
-
-`AsyncLock` can be acquired recursively **exclusively** with `withLock` blocks. If you try to re-lock without being nested within a `withLock`, you **will** deadlock your actor.
 
 ## Contributing and Collaboration
 

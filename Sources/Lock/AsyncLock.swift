@@ -1,6 +1,4 @@
 public final class AsyncLock {
-	@TaskLocal private static var locked: Bool = false
-
 	private enum State {
 		typealias Continuation = CheckedContinuation<Void, Never>
 
@@ -41,50 +39,35 @@ public final class AsyncLock {
 	}
 
 	public func lock(isolation: isolated (any Actor)? = #isolation) async {
-		if Self.locked == true {
-			return
-		}
-
 		switch state {
 		case .unlocked:
 			self.state = .locked([])
 		case .locked:
 			await withCheckedContinuation { continuation in
-				self.state.addContinuation(continuation)
+				state.addContinuation(continuation)
 			}
 		}
 	}
 
-	public func unlock(isolation: isolated (any Actor)? = #isolation) async {
-		if Self.locked == true {
-			return
-		}
-
-		self.state.resumeNextContinuation()
+	public func unlock() {
+		state.resumeNextContinuation()
 	}
 
-	// this currently crashes the compiler
-	//	public func withLock<T>(
-	//		isolation: isolated (any Actor)? = #isolation,
-	//		@_inheritActorContext _ block: @isolated(any) @escaping () async throws -> sending T
-	//	) async rethrows -> sending T {
-	//		if Self.locked == true {
-	//			return try await block()
-	//		}
-	//
-	//		return await lock()
-	//
-	//		do {
-	//			let value = try await Self.$locked.withValue(true) {
-	//				try await block()
-	//			}
-	//
-	//			await unlock()
-	//
-	//			return value
-	//		} catch {
-	//			throw error
-	//		}
-	//	}
+//	public func withLock<T>(
+//		isolation: isolated (any Actor)? = #isolation,
+//		_ block: @isolated(any) () async throws -> sending T
+//	) async rethrows -> sending T {
+//		do {
+//			let value = try await block()
+//
+//			unlock()
+//
+//			return value
+//		} catch {
+//			unlock()
+//
+//			throw error
+//		}
+//	}
 }
 
