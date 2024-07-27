@@ -8,7 +8,7 @@
 # Lock
 A lock for Swift concurrency
 
-This package exposes a single type: `AsyncLock`. This type allows you to define **asynchronous** critical sections. One only task can enter a critical section at a time. The lock can be used recursively, but requires a little care to do so. Unfortunately, the method that implements the recursive functionality currently [crashes the compiler]((https://github.com/swiftlang/swift/issues/75523).
+This package exposes a single type: `AsyncLock`. This type allows you to define **asynchronous** critical sections. One only task can enter a critical section at a time. The lock can be used recursively, but requires a little care to do so. Unfortunately, the method that implements the recursive functionality currently [crashes the compiler](https://github.com/swiftlang/swift/issues/75523).
 
 This is a handy tool for dealing with actor reentrancy.
 
