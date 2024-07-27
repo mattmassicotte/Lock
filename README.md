@@ -8,7 +8,7 @@
 # Lock
 A lock for Swift concurrency
 
-This package exposes two singles types: `AsyncLock` and `AsyncRecursiveLock`. These allow you to define **asynchronous** critical sections. One only task can enter a critical section at a time.
+This package exposes two types: `AsyncLock` and `AsyncRecursiveLock`. These allow you to define **asynchronous** critical sections. One only task can enter a critical section at a time.
 
 Unfortunately, the method that implements the recursive functionality currently [crashes the compiler](https://github.com/swiftlang/swift/issues/75523).
 
@@ -31,11 +31,13 @@ dependencies: [
 
 ## Usage
 
-The `AsyncLock` type is **non-Sendable**. This is an intentional choice to disallow sharing the lock across isolation domains. If you want to something like that, first think really hard about why and then check out [Semaphore][].
+These locks are **non-Sendable**. This is an intentional choice to disallow sharing the lock across isolation domains. If you want to something like that, first think really hard about why and then check out [Semaphore][].
 
 Note that trying to acquire an already-locked `AsyncLock` **will** deadlock your actor.
 
 ```swift
+import Lock
+
 actor MyActor {
   var value = 42
   let lock = AsyncLock()
