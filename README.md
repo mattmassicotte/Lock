@@ -15,6 +15,8 @@ This is a handy tool for dealing with actor reentrancy.
 > [!CAUTION]
 > This doesn't yet have great test coverage and it cannot be built with the compiler available in Xcode 16b4.
 
+Some other concurrency packages you might find useful are [Queue](https://github.com/mattmassicotte/Queue) and [Semaphore][].
+
 ## Integration
 
 Swift Package Manager:
@@ -27,6 +29,33 @@ dependencies: [
 
 ## Usage
 
+The `AsyncLock` type is **non-Sendable**. This is an intentional choice to disallow sharing the lock across isolation domains. If you want to something like that, first think really hard about why and then check out [Semaphore][].
+
+```swift
+actor MyActor {
+	var value = 42
+	let lock = AsyncLock()
+
+	func hasCriticalSections() async {
+		await lock.lock()
+
+		self.value = await otherObject.getValue()
+
+		await lock.unlock()
+	}
+
+	// This version enables recursive locking, but currently crashes the compiler
+	func hasCriticalSectionsBlock() async {
+		await lock.withLock {
+
+		self.value = await otherObject.getValue()
+
+		}
+	}
+}
+```
+
+`AsyncLock` can be acquired recursively **exclusively** with `withLock` blocks. If you try to re-lock without being nested within a `withLock`, you **will** deadlock your actor.
 
 ## Contributing and Collaboration
 
@@ -45,3 +74,4 @@ By participating in this project you agree to abide by the [Contributor Code of 
 [matrix]: https://matrix.to/#/%23chimehq%3Amatrix.org
 [matrix badge]: https://img.shields.io/matrix/chimehq%3Amatrix.org?label=Matrix
 [discord]: https://discord.gg/esFpX6sErJ
+[Semaphore]: https://github.com/groue/Semaphore
