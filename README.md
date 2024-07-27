@@ -31,7 +31,7 @@ dependencies: [
 
 ## Usage
 
-These locks are **non-Sendable**. This is an intentional choice to disallow sharing the lock across isolation domains. If you want to something like that, first think really hard about why and then check out [Semaphore][].
+These locks are **non-Sendable**. This is an intentional choice to disallow sharing the lock across isolation domains. If you want to do something like that, first think really hard about why and then check out [Semaphore][].
 
 Note that trying to acquire an already-locked `AsyncLock` **will** deadlock your actor.
 
