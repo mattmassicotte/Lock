@@ -33,25 +33,25 @@ The `AsyncLock` type is **non-Sendable**. This is an intentional choice to disal
 
 ```swift
 actor MyActor {
-	var value = 42
-	let lock = AsyncLock()
+    var value = 42
+    let lock = AsyncLock()
 
-	func hasCriticalSections() async {
-		await lock.lock()
+    func hasCriticalSections() async {
+        await lock.lock()
 
-		self.value = await otherObject.getValue()
+        self.value = await otherObject.getValue()
 
-		await lock.unlock()
-	}
+        await lock.unlock()
+    }
 
-	// This version enables recursive locking, but currently crashes the compiler
-	func hasCriticalSectionsBlock() async {
-		await lock.withLock {
+    // This version enables recursive locking, but currently crashes the compiler
+    func hasCriticalSectionsBlock() async {
+        await lock.withLock {
 
-		self.value = await otherObject.getValue()
+        self.value = await otherObject.getValue()
 
-		}
-	}
+        }
+    }
 }
 ```
 
