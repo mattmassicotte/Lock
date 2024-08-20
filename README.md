@@ -51,7 +51,6 @@ actor MyActor {
     lock.unlock()
   }
 
-  // currently unavailable due to a compiler bug
   func hasCriticalSectionsBlock() async {
     await recursiveLock.withLock {
       // acquiring this multiple times within the same task is safe
