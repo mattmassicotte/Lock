@@ -12,9 +12,6 @@ This package exposes two types: `AsyncLock` and `AsyncRecursiveLock`. These allo
 
 This is a handy tool for dealing with actor reentrancy.
 
-> [!CAUTION]
-> This doesn't yet have great test coverage.
-
 Some other concurrency packages you might find useful are [Queue](https://github.com/mattmassicotte/Queue) and [Semaphore][].
 
 ## Integration
