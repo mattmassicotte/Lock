@@ -10,12 +10,10 @@ A lock for Swift concurrency
 
 This package exposes two types: `AsyncLock` and `AsyncRecursiveLock`. These allow you to define **asynchronous** critical sections. One only task can enter a critical section at a time. Unlike a traditional lock, you can safely make async calls while these locks are held.
 
-Unfortunately, the method that implements the recursive functionality currently [crashes the compiler](https://github.com/swiftlang/swift/issues/75523).
-
 This is a handy tool for dealing with actor reentrancy.
 
 > [!CAUTION]
-> This doesn't yet have great test coverage and it cannot be built with the compiler available in Xcode 16b4.
+> This doesn't yet have great test coverage.
 
 Some other concurrency packages you might find useful are [Queue](https://github.com/mattmassicotte/Queue) and [Semaphore][].
 

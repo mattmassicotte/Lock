@@ -53,21 +53,21 @@ public final class AsyncLock {
 		state.resumeNextContinuation()
 	}
 
-//	public func withLock<T>(
-//		isolation: isolated (any Actor)? = #isolation,
-//		_ block: @isolated(any) () async throws -> sending T
-//	) async rethrows -> sending T {
-//		do {
-//			let value = try await block()
-//
-//			unlock()
-//
-//			return value
-//		} catch {
-//			unlock()
-//
-//			throw error
-//		}
-//	}
+	public func withLock<T: Sendable>(
+		isolation: isolated (any Actor)? = #isolation,
+		_ block: @isolated(any) () async throws -> T
+	) async rethrows -> T {
+		do {
+			let value = try await block()
+
+			unlock()
+
+			return value
+		} catch {
+			unlock()
+
+			throw error
+		}
+	}
 }
 
