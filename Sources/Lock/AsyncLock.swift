@@ -57,6 +57,8 @@ public final class AsyncLock {
 		isolation: isolated (any Actor)? = #isolation,
 		_ block: @isolated(any) () async throws -> T
 	) async rethrows -> T {
+		await lock()
+
 		do {
 			let value = try await block()
 

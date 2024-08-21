@@ -36,7 +36,7 @@ struct RecursiveLockTests {
 	}
 
 	@Test
-	func serializes() async {
+	func serializesWithRecursiveLock() async {
 		let actor = RecursiveReentrantActor()
 		var tasks = [Task<Void, Never>]()
 
