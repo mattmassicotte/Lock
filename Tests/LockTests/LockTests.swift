@@ -2,28 +2,20 @@ import Testing
 import Lock
 
 actor ReentrantActor {
-	var value = 42
+	let state = ReentrantSensitiveState()
 	let lock = AsyncLock()
 
-	func doThingWithLock() async {
-		await lock.withLock {
-			try! #require(self.value == 42)
-			self.value = 0
-			try! await Task.sleep(nanoseconds: 1_000_000)
-			try! #require(self.value == 0)
-			self.value = 42
+	func doThingUsingWithLock() async throws {
+		try await lock.withLock {
+			try await state.doThing()
 		}
 	}
 
-	func doThing() async {
+	func doThingUsingLockUnlock() async throws {
 		await lock.lock()
 		defer { lock.unlock() }
 
-		try! #require(self.value == 42)
-		self.value = 0
-		try! await Task.sleep(nanoseconds: 1_000_000)
-		try! #require(self.value == 0)
-		self.value = 42
+		try await state.doThing()
 	}
 }
 
@@ -37,38 +29,38 @@ struct LockTests {
 	}
 
 	@Test
-	func serializes() async {
+	func serializes() async throws {
 		let actor = ReentrantActor()
-		var tasks = [Task<Void, Never>]()
+		var tasks = [Task<Void, any Error>]()
 
 		for _ in 0..<1000 {
 			let task = Task {
-				await actor.doThing()
+				try await actor.doThingUsingLockUnlock()
 			}
 
 			tasks.append(task)
 		}
 
 		for task in tasks {
-			await task.value
+			try await task.value
 		}
 	}
 
 	@Test
-	func serializesWithLock() async {
+	func serializesWithLock() async throws {
 		let actor = ReentrantActor()
-		var tasks = [Task<Void, Never>]()
+		var tasks = [Task<Void, any Error>]()
 
 		for _ in 0..<1000 {
 			let task = Task {
-				await actor.doThingWithLock()
+				try await actor.doThingUsingWithLock()
 			}
 
 			tasks.append(task)
 		}
 
 		for task in tasks {
-			await task.value
+			try await task.value
 		}
 	}
 }
