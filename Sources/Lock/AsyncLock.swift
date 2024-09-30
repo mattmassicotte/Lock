@@ -71,5 +71,15 @@ public final class AsyncLock {
 			throw error
 		}
 	}
-}
 
+	public var isLocked: Bool {
+		get {
+			switch state {
+			case .unlocked:
+				false
+			case .locked:
+				true
+			}
+		}
+	}
+}

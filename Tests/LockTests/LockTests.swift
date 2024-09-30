@@ -63,4 +63,26 @@ struct LockTests {
 			try await task.value
 		}
 	}
+
+	@Test
+	func checkLock() async throws {
+		let lock = AsyncLock()
+
+		#expect(lock.isLocked == false)
+		await lock.lock()
+		#expect(lock.isLocked == true)
+		lock.unlock()
+		#expect(lock.isLocked == false)
+	}
+
+	@Test
+	func checkLockWithLocked() async throws {
+		let lock = AsyncLock()
+
+		#expect(lock.isLocked == false)
+		await lock.withLock {
+			#expect(lock.isLocked == true)
+		}
+		#expect(lock.isLocked == false)
+	}
 }
