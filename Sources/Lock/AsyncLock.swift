@@ -17,7 +17,7 @@ public final class AsyncLock {
 
 		mutating func resumeNextContinuation() {
 			guard case var .locked(continuations) = self else {
-				fatalError("Continuations cannot be added when unlocked")
+				fatalError("No continuations to resume")
 			}
 
 			if continuations.isEmpty {
