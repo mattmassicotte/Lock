@@ -2,6 +2,7 @@
 
 [![Build Status][build status badge]][build status]
 [![Platforms][platforms badge]][platforms]
+[![Matrix][matrix badge]][matrix]
 
 </div>
 
@@ -12,7 +13,7 @@ This package exposes two types: `AsyncLock` and `AsyncRecursiveLock`. These allo
 
 This is a handy tool for dealing with actor reentrancy.
 
-Some other concurrency packages you might find useful are [Queue](https://github.com/mattmassicotte/Queue) and [Semaphore][].
+Some other concurrency packages you might find useful are [Queue][] and [Semaphore][].
 
 ## Integration
 
@@ -59,6 +60,8 @@ actor MyActor {
 }
 ```
 
+Unfortunately, I haven't quite figured out how to make `AsyncRecursiveLock` right yet, so it's currently not public.
+
 ## Contributing and Collaboration
 
 I would love to hear from you! Issues or pull requests work great. Both a [Matrix space][matrix] and [Discord][discord] are also available for live help, but I have a strong bias towards answering in the form of documentation.
@@ -77,3 +80,4 @@ By participating in this project you agree to abide by the [Contributor Code of 
 [matrix badge]: https://img.shields.io/matrix/chimehq%3Amatrix.org?label=Matrix
 [discord]: https://discord.gg/esFpX6sErJ
 [Semaphore]: https://github.com/groue/Semaphore
+[Queue]: https://github.com/mattmassicotte/Queue
